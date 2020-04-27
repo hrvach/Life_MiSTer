@@ -18,7 +18,7 @@ Following these rules, a new board state can be calculated from the current one 
 
 ## Implementation
 
-[![video demonstration](img/ytlink.png)](https://www.youtube.com/watch?v=iymD9eysqXo)
+[![video demonstration](img/ytlink.png)](https://www.youtube.com/watch?v=KaBm4etcYFQ)
 
 #### Click on the image to see the project's video output!
 
