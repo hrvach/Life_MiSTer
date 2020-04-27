@@ -30,7 +30,7 @@ There are many clever techniques to achieve higher GoL framerates, but the limit
 
 <img src="img/diagram.png" alt="diagram" align="right">
 
-The entire game is implemented as two small shift registers for rows 1 and 2 and a large one which holds the remaining rows. Rows 1 and 2 are deliberately 2 pixels short, and have two separate registers added in front of them. This enables direct access to all neighbor cells of cell (1,1) and it is possible to determine the faith of this cell in the next generation.
+The entire game is implemented as two small shift registers for rows 1 and 2 and a large one which holds the remaining rows. Rows 1 and 2 are deliberately 2 pixels short, and have two separate registers added in front of them. This enables direct access to all neighbor cells of cell (1,1) and it is possible to determine the fate of this cell in the next generation.
 
 This future cell is shifted into the large shift register and the original cell keeps getting shifted to old row 1 to be used for remaining calculations. The whole process then repeats indefinitely. There are probably better ways to do this, but this one seemed simple enough to use. 
 
