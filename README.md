@@ -32,13 +32,13 @@ There are many clever techniques to achieve higher GoL framerates, but the limit
 
 The entire game is implemented as two small shift registers for rows 1 and 2 and a large one which holds the remaining rows. Rows 1 and 2 are deliberately 2 pixels short, and have two separate registers added in front of them. This enables direct access to all neighbor cells of cell (1,1) and it is possible to determine the faith of this cell in the next generation.
 
-This future cell is shifted in a separate row 1 that holds future cells and the original cell keeps getting shifted to old row 1 to be used for remaining calculations. The alternate row 1 then gets shifted into the large shift register and the whole process repeats indefinitely. There are probably better ways to do this, but this one seemed simple enough to use. 
+This future cell is shifted into the large shift register and the original cell keeps getting shifted to old row 1 to be used for remaining calculations. The whole process then repeats indefinitely. There are probably better ways to do this, but this one seemed simple enough to use. 
 
 ### Logic
 
 Rows are implemented by using *altshift_taps* component from Intel/Altera, providing a very simple shift register interface (clock, in, out).
 
-The entire game logic can be simplified to one line:
+The entire game logic can be simplified to **one line**:
 
    ```verilog
    output_pixel <= (neighbor_count | r2p2) == 4'd3;
@@ -57,15 +57,14 @@ Implementing random seed gives you the idea just how much raw bandwidth flows to
    end   
 ```
 
-That's it! Interestig application note on LFSRs can be found [here](https://www.xilinx.com/support/documentation/application_notes/xapp052.pdf).
+That's it! Interesting application note on LFSRs can be found [here](https://www.xilinx.com/support/documentation/application_notes/xapp052.pdf).
 
 
 ## Game of Life Trivia
 
-The fascinating thing is that it is (Turing complete)[https://en.wikipedia.org/wiki/Turing_completeness]  and it could, in theory, calculate anything your computer could. This is how one of the possible implementations looks like [[2]](http://rendell-attic.org/gol/tm.htm):
+The fascinating thing is that it is [Turing complete](https://en.wikipedia.org/wiki/Turing_completeness)  and it could, in theory, calculate anything your computer could. [This is how](http://rendell-attic.org/gol/tm.htm) one of the possible implementations looks like. Also, some cool feats like this amazing digital clock [4] can be constructed.
 
-
-![Turing_Machine](img/250px-Turingmachine.png)
+![Turing_Machine](img/clock.gif)
 
 ## Installation
 
@@ -99,12 +98,12 @@ A. Try switching the aspect ratio from OSD (press F12 to access it).
 
 ##### Q. Memory files are HUGE
 
-A. True, and very inefficient but they compress well as their entropy is low. The idea was to implement a RLE encoding format, but there is an issue with ioctl_wait that needs to be addressed before or a different approach to file transfer taken (SD card vhd image and transfer in chunks).
+A. They are, indeed, very inefficient but they compress well as their entropy is low. The idea was to implement a RLE encoding format, but there is an issue with ioctl_wait that needs to be addressed before or a different approach to file transfer taken (SD card vhd image and transfer in chunks).
 
 ## Known issues and missing features
 
 - Board wraps around
-- RLE file format should be implemented
+- RLE file format should be implemented instead of the current crappy one
 
 ## License
 
@@ -115,3 +114,4 @@ This software is licensed under the MIT license.
   1. [Conway's Game of Life, Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)   accessed 27.04.2020.
   2. [Game of Life Turing machine](http://rendell-attic.org/gol/tm.htm) accessed 27.04.2020.   
   3. Gardner, Martin (October 1970). ["Mathematical Games - The Fantastic Combinations of John Conway's New Solitaire Game 'Life'" (PDF)](https://web.stanford.edu/class/sts145/Library/life.pdf). Scientific American (223): 120–123
+  4. [Digital clock in Game of Life](https://codegolf.stackexchange.com/questions/88783/build-a-digital-clock-in-conways-game-of-life), accessed 27.04.2020.
