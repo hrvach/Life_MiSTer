@@ -1,0 +1,11 @@
+set_global_assignment -name SYSTEMVERILOG_FILE Life.sv
+set_global_assignment -name CDF_FILE jtag.cdf
+set_global_assignment -name QIP_FILE sys/sys.qip
+set_global_assignment -name QIP_FILE sys/pll_hdmi.qip
+set_global_assignment -name QIP_FILE sys/pll_cfg.qip
+set_global_assignment -name QIP_FILE video_pll.qip
+set_global_assignment -name SIP_FILE video_pll.sip
+set_global_assignment -name VERILOG_FILE memory.v
+set_global_assignment -name VERILOG_FILE lfsr.v
+set_global_assignment -name TOP_LEVEL_ENTITY sys_top
+
