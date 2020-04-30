@@ -71,7 +71,7 @@ wire [7:0]  ioctl_dout;
 
 hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 (
-   .clk_sys(CLK_50M),
+   .clk_sys(HDMI_CLK),
    .HPS_BUS(HPS_BUS),
    .conf_str(CONF_STR),
    .status(status),
@@ -79,7 +79,8 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
    .ioctl_download(ioctl_download),
    .ioctl_wr(ioctl_wr),
    .ioctl_addr(ioctl_addr),
-   .ioctl_dout(ioctl_dout)
+   .ioctl_dout(ioctl_dout),
+	.ioctl_wait(ioctl_wr | (ioctl_wait))
 );
 
 
@@ -99,29 +100,41 @@ reg output_pixel,
 wire pixel_out_row1, 
      pixel_out_row2, 
      pixel_out_fifo;
-        
    
-always @(posedge CLK_50M) begin
+
+reg [6:0] repeat_cnt;
+        
+wire ioctl_wait = repeat_cnt > 0;
+
+always @(posedge HDMI_CLK) begin
+	repeat_cnt <= repeat_cnt > 0 ? repeat_cnt - 1'b1 : 0;
+   
+	if (ioctl_download & ioctl_wr & (~ioctl_wait))
+       repeat_cnt <= ioctl_dout[6:0];
+
    sync_wait <= ioctl_download | (sync_wait & |{hc, vc});
 end
+	
 
 /* If uploading new seed state, switch the shift register to 50 MHz HPS clock instead of the video clock.
    Input feed is switched to data received. 
 */
-fb fb_shift_reg (
-        .clock(ioctl_download ? ioctl_wr : conway_clk),
-        .shiftin(ioctl_download ? ioctl_dout[0] : output_pixel),
-        .shiftout(pixel_out_fifo)
+ring fb_shift_reg (
+        .clock(HDMI_CLK),
+		  .enable(ioctl_download ? ioctl_wait | ioctl_wr : ~sync_wait),
+        .shiftin(ioctl_download ? ioctl_dout[7] : output_pixel),
+        .shiftout(pixel_out_fifo),
+		  .status(status)
 );
 
 row row1 (
-   .clock(ioctl_download ? CLK_50M : conway_clk),
+   .clock(ioctl_download ? HDMI_CLK : conway_clk),
    .shiftin(r2p1),
    .shiftout(pixel_out_row1)                                               
 );
 
 row row2 (
-   .clock(ioctl_download ? CLK_50M : conway_clk),
+   .clock(ioctl_download ? HDMI_CLK : conway_clk),
    .shiftin(status[2] ? random_data[0] : r3p1),				// status[2] => if set it feeds random pixels to next generation
    .shiftout(pixel_out_row2)                                               
 );
